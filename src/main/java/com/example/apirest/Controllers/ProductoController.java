@@ -4,43 +4,36 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.apirest.Entities.Producto;
+import org.springframework.web.bind.annotation.*;
 import com.example.apirest.Services.ProductoService;
+import com.example.apirest.dto.request.ProductoRequest;
+import com.example.apirest.dto.response.ProductoResponse;
 
 @RestController
-@RequestMapping("/productos")
+@RequestMapping("/products")
 public class ProductoController {
 
     @Autowired
     private ProductoService productoService; // instancia de service
 
     @GetMapping
-    public List<Producto> getAll() {
+    public List<ProductoResponse> getAll() {
         return productoService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Producto getById(@PathVariable UUID id) {
+    public ProductoResponse getById(@PathVariable UUID id) {
         return productoService.getById(id);
     }
 
     @PostMapping
-    public Producto create(@RequestBody Producto producto) {
+    public ProductoResponse create(@RequestBody ProductoRequest producto) {
         return productoService.create(producto);
     }
 
     @PutMapping("/{id}")
-    public Producto update(@PathVariable UUID id, @RequestBody Producto detailProduct) {
-        return productoService.update(id, detailProduct);
+    public ProductoResponse update(@PathVariable UUID id, @RequestBody ProductoRequest data) {
+        return productoService.update(id, data);
     }
 
     @DeleteMapping("/{id}")

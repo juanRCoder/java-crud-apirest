@@ -4,10 +4,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.apirest.Entities.Producto;
 import com.example.apirest.Repositories.ProductoRepository;
+import com.example.apirest.dto.request.ProductoRequest;
+import com.example.apirest.dto.response.ProductoResponse;
+import com.example.apirest.exception.ProductoException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductoService {
@@ -15,33 +17,63 @@ public class ProductoService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public List<Producto> getAll() {
-        return productoRepository.findAll();
+    public List<ProductoResponse> getAll() {
+        List<Producto> productos = productoRepository.findAll();
+
+        List<ProductoResponse> response = new ArrayList<>();
+        for (Producto p : productos) {
+            response.add(toResponse(p)); // convierto cada uno
+        }
+        return response;
     }
 
-    public Producto getById(UUID id) {
-        return productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con id: " + id + " no encontrado"));
-    }
-
-    public Producto create(Producto producto) {
-        return productoRepository.save(producto);
-    }
-
-    public Producto update(UUID id, Producto detailProduct) {
+    public ProductoResponse getById(UUID id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con id: " + id + " no encontrado"));
+                .orElseThrow(() -> new ProductoException(id));
+        return toResponse(producto);
+    }
 
-        producto.setNombre(detailProduct.getNombre());
-        producto.setPrecio(detailProduct.getPrecio());
-        return productoRepository.save(producto);
+    public ProductoResponse create(ProductoRequest data) {
+       Producto producto = new Producto();
+        producto.setNombre(data.getNombre());
+        producto.setPrecio(data.getPrecio());
+
+        Producto created = productoRepository.save(producto);
+        return toResponse(created);
+    }
+
+    public ProductoResponse update(UUID id, ProductoRequest data) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ProductoException(id));
+
+        if (data.getNombre() != null) {
+            producto.setNombre(data.getNombre());
+        }
+        if (data.getPrecio() != 0) {
+            producto.setPrecio(data.getPrecio());
+        }
+
+        Producto updated = productoRepository.save(producto);
+        return toResponse(updated);
     }
 
     public String delete(UUID id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con id: " + id + " no encontrado"));
+        productoRepository.findById(id)
+                .orElseThrow(() -> new ProductoException(id));
 
-        productoRepository.delete(producto);
-        return "El producto " + producto.getNombre() + " fue eliminado correctamente!";
+        productoRepository.deleteById(id);
+        return "El producto " + id + " fue eliminado correctamente!";
+    }
+
+
+    //mapeo
+    private ProductoResponse toResponse(Producto producto) {
+        return new ProductoResponse(
+            producto.getId().toString(),
+            producto.getNombre(),
+            producto.getPrecio(),
+            producto.getCreatedAt(),
+            producto.getUpdatedAt()
+        );
     }
 }

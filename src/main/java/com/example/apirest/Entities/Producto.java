@@ -1,6 +1,10 @@
 package com.example.apirest.Entities;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GenerationType;
@@ -18,4 +22,9 @@ public class Producto {
     private UUID id;
     private String nombre;
     private double precio;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
 }
