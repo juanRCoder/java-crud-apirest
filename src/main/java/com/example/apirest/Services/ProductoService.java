@@ -22,7 +22,7 @@ public class ProductoService {
 
         List<ProductoResponse> response = new ArrayList<>();
         for (Producto p : productos) {
-            response.add(toResponse(p)); // convierto cada uno
+            response.add(toResponse(p));
         }
         return response;
     }
