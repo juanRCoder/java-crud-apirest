@@ -14,8 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Getter // genera getters automatico de propiedades
+@Setter // genera setter automatico de propiedades
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

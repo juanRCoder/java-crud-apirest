@@ -1,14 +1,14 @@
 package com.example.apirest.Services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.apirest.Entities.Producto;
 import com.example.apirest.Repositories.ProductoRepository;
 import com.example.apirest.dto.request.ProductoRequest;
 import com.example.apirest.dto.response.ProductoResponse;
-import com.example.apirest.exception.ProductoException;
+import com.example.apirest.exception.NotFoundException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @Service
@@ -29,7 +29,10 @@ public class ProductoService {
 
     public ProductoResponse getById(UUID id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ProductoException(id));
+               .orElseThrow(() -> new NotFoundException(
+                    "PRODUCT_NOT_FOUND",
+                    "El producto con id " + id + " no se encontro."
+                ));
         return toResponse(producto);
     }
 
@@ -44,7 +47,10 @@ public class ProductoService {
 
     public ProductoResponse update(UUID id, ProductoRequest data) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ProductoException(id));
+               .orElseThrow(() -> new NotFoundException(
+                    "PRODUCT_NOT_FOUND",
+                    "El producto con id " + id + " no se encontro."
+                ));
 
         if (data.getNombre() != null) {
             producto.setNombre(data.getNombre());
@@ -59,7 +65,10 @@ public class ProductoService {
 
     public String delete(UUID id) {
         productoRepository.findById(id)
-                .orElseThrow(() -> new ProductoException(id));
+               .orElseThrow(() -> new NotFoundException(
+                    "PRODUCT_NOT_FOUND",
+                    "El producto con id " + id + " no se encontro."
+                ));
 
         productoRepository.deleteById(id);
         return "El producto " + id + " fue eliminado correctamente!";
