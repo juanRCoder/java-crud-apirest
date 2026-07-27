@@ -1,28 +1,34 @@
-package com.example.apirest.Services;
+package com.example.apirest.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.apirest.Entities.Producto;
-import com.example.apirest.Repositories.ProductoRepository;
 import com.example.apirest.dto.request.ProductoRequest;
 import com.example.apirest.dto.response.ProductoResponse;
 import com.example.apirest.exception.NotFoundException;
+import com.example.apirest.mapper.ProductoMapper;
+import com.example.apirest.model.Producto;
+import com.example.apirest.repository.ProductoRepository;
 
 import java.util.*;
 
 @Service
 public class ProductoService {
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    private final ProductoRepository productoRepository;
+    private final ProductoMapper productoMapper;
+
+    public ProductoService(ProductoRepository productoRepository, ProductoMapper productoMapper) {
+        this.productoRepository = productoRepository;
+        this.productoMapper = productoMapper;
+        }
+
 
     public List<ProductoResponse> getAll() {
         List<Producto> productos = productoRepository.findAll();
 
         List<ProductoResponse> response = new ArrayList<>();
         for (Producto p : productos) {
-            response.add(toResponse(p));
+            response.add(productoMapper.toResponse(p));
         }
         return response;
     }
@@ -33,16 +39,13 @@ public class ProductoService {
                     "PRODUCT_NOT_FOUND",
                     "El producto con id " + id + " no se encontro."
                 ));
-        return toResponse(producto);
+        return productoMapper.toResponse(producto);
     }
 
     public ProductoResponse create(ProductoRequest data) {
-       Producto producto = new Producto();
-        producto.setNombre(data.getNombre());
-        producto.setPrecio(data.getPrecio());
-
-        Producto created = productoRepository.save(producto);
-        return toResponse(created);
+       Producto producto = productoMapper.toEntity(data);
+       Producto created = productoRepository.save(producto);
+       return productoMapper.toResponse(created);
     }
 
     public ProductoResponse update(UUID id, ProductoRequest data) {
@@ -60,7 +63,7 @@ public class ProductoService {
         }
 
         Producto updated = productoRepository.save(producto);
-        return toResponse(updated);
+        return productoMapper.toResponse(updated);
     }
 
     public String delete(UUID id) {
@@ -72,17 +75,5 @@ public class ProductoService {
 
         productoRepository.deleteById(id);
         return "El producto " + id + " fue eliminado correctamente!";
-    }
-
-
-    //mapeo
-    private ProductoResponse toResponse(Producto producto) {
-        return new ProductoResponse(
-            producto.getId().toString(),
-            producto.getNombre(),
-            producto.getPrecio(),
-            producto.getCreatedAt(),
-            producto.getUpdatedAt()
-        );
     }
 }

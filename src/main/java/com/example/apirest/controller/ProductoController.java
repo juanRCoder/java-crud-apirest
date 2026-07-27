@@ -1,20 +1,25 @@
-package com.example.apirest.Controllers;
+package com.example.apirest.controller;
 
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.example.apirest.Services.ProductoService;
+
 import com.example.apirest.dto.request.ProductoRequest;
 import com.example.apirest.dto.response.ProductoResponse;
+import com.example.apirest.service.ProductoService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/products")
 public class ProductoController {
 
-    @Autowired
-    private ProductoService productoService; // instancia de service
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
 
     @GetMapping
     public List<ProductoResponse> getAll() {
@@ -27,11 +32,11 @@ public class ProductoController {
     }
 
     @PostMapping
-    public ProductoResponse create(@RequestBody ProductoRequest producto) {
+    public ProductoResponse create(@RequestBody @Valid ProductoRequest producto) {
         return productoService.create(producto);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ProductoResponse update(@PathVariable UUID id, @RequestBody ProductoRequest data) {
         return productoService.update(id, data);
     }

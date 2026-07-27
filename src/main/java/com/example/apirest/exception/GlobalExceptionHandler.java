@@ -35,4 +35,12 @@ public class GlobalExceptionHandler {
         error.setMessage(message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
+    @ExceptionHandler(NotValidException.class)
+    public ResponseEntity<ErrorResponse> handleNotValid(NotValidException ex) {
+        ErrorResponse error = new ErrorResponse();
+        error.setErrorCode(ex.getErrorCode());
+        error.setMessage(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
 }

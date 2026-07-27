@@ -1,4 +1,4 @@
-package com.example.apirest.Entities;
+package com.example.apirest.model;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,12 +10,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter // genera getters automatico de propiedades
-@Setter // genera setter automatico de propiedades
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
