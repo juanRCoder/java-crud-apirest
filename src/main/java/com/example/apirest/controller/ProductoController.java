@@ -37,7 +37,7 @@ public class ProductoController {
     }
 
     @PatchMapping("/{id}")
-    public ProductoResponse update(@PathVariable UUID id, @RequestBody ProductoRequest data) {
+    public ProductoResponse update(@PathVariable UUID id, @RequestBody @Valid ProductoRequest data) {
         return productoService.update(id, data);
     }
 

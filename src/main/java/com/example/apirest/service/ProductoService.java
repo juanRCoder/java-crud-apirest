@@ -67,11 +67,12 @@ public class ProductoService {
     }
 
     public String delete(UUID id) {
-        productoRepository.findById(id)
-               .orElseThrow(() -> new NotFoundException(
-                    "PRODUCT_NOT_FOUND",
-                    "El producto con id " + id + " no se encontro."
-                ));
+        if (!productoRepository.existsById(id)) {
+            throw new NotFoundException(
+                "PRODUCT_NOT_FOUND",
+                "El producto con id " + id + " no se encontro."
+            );
+        }
 
         productoRepository.deleteById(id);
         return "El producto " + id + " fue eliminado correctamente!";
